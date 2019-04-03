@@ -10,7 +10,6 @@ import sklearn
 
 ray.init()
 
-@ray.remote
 def read_and_process_data(filename, train_flag):
     with open(filename, "r") as f:
         contents = f.read()
