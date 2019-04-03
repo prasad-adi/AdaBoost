@@ -43,7 +43,7 @@ class Preprocess:
         else:
             boosting = AdaBoost_decison_stump()
         training_accuracy, testing_accuracy = boosting.boost(training_data, testing_data,  epochs)
-        c = []
+        #c = []
 
         print("Average_training_accuracy = ", training_accuracy)
         print("Average testing accuracy = ", testing_accuracy)
