@@ -17,6 +17,7 @@ class AdaBoost_decison_stump:
         training_error_list = []
         testing_error_list = []
         for i in range(epochs):
+            print(i)
             weak_classifier_used = weak_classifier_decision_stump_2()
             epsilon, column,  value = weak_classifier_used.fit(X = training_data[:,:-1], Y = training_data[:,-1], distributions = distribution)
             y_pred = weak_classifier_used.predict(value=value, column=column, X = training_data[:,:-1])
@@ -37,14 +38,8 @@ class AdaBoost_decison_stump:
             training_error_list.append(training_error)
             testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
             testing_error_list.append(testing_error)
-            if(i % 200 == 0):
-                print("training accuracy = ", training_accuracy)
-                print("testing_accuracy = ", testing_accuracy)
-                self.plot_error(round_error)
-                self.plot_ROC_curve(testing_prediction, testing_data[:, -1])
-                if(i > 0):
-                    self.plot_training_testing_error(training_error_list, i,0)
-                    self.plot_training_testing_error(testing_error_list, i, 1)
+            print("training accuracy = ", training_accuracy)
+            print("testing_accuracy = ", testing_accuracy)
         return training_accuracy, testing_accuracy
 
 
