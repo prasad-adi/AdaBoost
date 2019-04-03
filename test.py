@@ -61,7 +61,7 @@ def get_class_from_ECOC(testing_predictions, class_codes):
 def call_boost(list, class_codes, i,X_train, Y_train, X_test, Y_test ):
     boosting = AdaBoost_ECOC()
     Y = get_label(list[i], class_codes, Y_train)
-    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 200)
+    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 1)
     testing_predictions = np.where(testing_predictions <= 0, -1, 1)
     training_predictions = np.where(training_predictions <= 0, -1, 1)
     return testing_predictions, training_predictions
@@ -73,32 +73,34 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
     testing_predictions_ecoc = np.zeros(X_test.shape[0]).reshape(X_test.shape[0], 1)
     training_predictions_ecoc = np.zeros(X_train.shape[0]).reshape(X_train.shape[0], 1)
     i = 0
-    while(i < ecoc_number):
-        print(i)
-        Id1 = call_boost.remote(list, class_codes, i, X_train, Y_train, X_test, Y_test)
-        Id2 = call_boost.remote(list, class_codes, i + 1, X_train, Y_train, X_test, Y_test)
-        Id3 = call_boost.remote(list,  class_codes, i + 2, X_train, Y_train, X_test, Y_test)
-        testing_predictions0, training_predictions0 = ray.get(Id1)
-        testing_predictions1, training_predictions1 = ray.get(Id2)
-        testing_predictions2, training_predictions2 = ray.get(Id3)
-        testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
-                                              testing_predictions0.reshape(X_test.shape[0], 1)), axis = 1)
-        testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
-                                                   testing_predictions1.reshape(X_test.shape[0], 1)), axis=1)
-        testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
-                                                   testing_predictions2.reshape(X_test.shape[0], 1)), axis=1)
+    with open("./Ecoc.txt", "w") as f:
+        while(i < ecoc_number):
+            print(i)
+            Id1 = call_boost.remote(list, class_codes, i, X_train, Y_train, X_test, Y_test)
+            Id2 = call_boost.remote(list, class_codes, i + 1, X_train, Y_train, X_test, Y_test)
+            Id3 = call_boost.remote(list,  class_codes, i + 2, X_train, Y_train, X_test, Y_test)
+            testing_predictions0, training_predictions0 = ray.get(Id1)
+            testing_predictions1, training_predictions1 = ray.get(Id2)
+            testing_predictions2, training_predictions2 = ray.get(Id3)
+            testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
+                                                  testing_predictions0.reshape(X_test.shape[0], 1)), axis = 1)
+            testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
+                                                       testing_predictions1.reshape(X_test.shape[0], 1)), axis=1)
+            testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
+                                                       testing_predictions2.reshape(X_test.shape[0], 1)), axis=1)
 
-        training_predictions_ecoc = np.concatenate((training_predictions_ecoc, training_predictions0.reshape(X_train.shape[0], 1)), axis = 1)
-        training_predictions_ecoc = np.concatenate(
-            (training_predictions_ecoc, training_predictions1.reshape(X_train.shape[0], 1)), axis=1)
-        training_predictions_ecoc = np.concatenate(
-            (training_predictions_ecoc, training_predictions1.reshape(X_train.shape[0], 1)), axis=1)
-        if (i % 6 == 0):
+            training_predictions_ecoc = np.concatenate((training_predictions_ecoc, training_predictions0.reshape(X_train.shape[0], 1)), axis = 1)
+            training_predictions_ecoc = np.concatenate(
+                (training_predictions_ecoc, training_predictions1.reshape(X_train.shape[0], 1)), axis=1)
+            training_predictions_ecoc = np.concatenate(
+                (training_predictions_ecoc, training_predictions1.reshape(X_train.shape[0], 1)), axis=1)
             y_pred_test = get_class_from_ECOC(testing_predictions_ecoc[:, 1:], class_codes[:, list])
             y_pred_train = get_class_from_ECOC(training_predictions_ecoc[:, 1:], class_codes[:, list])
+            f.write("ECOC training accuracy = " + str(sklearn.metrics.accuracy_score(Y_train, y_pred_train)))
+            f.write("ECOC testing accuracy = " +str(sklearn.metrics.accuracy_score(Y_test, y_pred_test)))
             print("ECOC training accuracy = ", sklearn.metrics.accuracy_score(Y_train, y_pred_train))
             print("ECOC testing accuracy = ", sklearn.metrics.accuracy_score(Y_test, y_pred_test))
-        i += 3
+            i += 3
 
 def generate_class_codes(k):
     class_codes = np.ones(127).reshape(1,127)
