@@ -46,8 +46,10 @@ class Preprocess:
         c = []
 
         print("Average_training_accuracy = ", training_accuracy)
-        #print("Average testing accuracy = ", testing__accuracy)
-        c = []
+        print("Average testing accuracy = ", testing_accuracy)
+        with open("./spambase_polluted.txt", "w") as f:
+            f.write("Average_training_accuracy = " + str(training_accuracy))
+            f.write("\nAverage testing_accuracy = " + str(testing_accuracy))
 
 boost = Preprocess()
 boost.run(normalise = False,epochs = 201, random_classifier= False)
