@@ -5,6 +5,7 @@ np.random.seed(0)
 import sklearn
 from scipy.spatial import distance
 from AdaBoost_ECOC import AdaBoost_ECOC
+import ray
 
 def read_and_process_data(filename, train_flag):
     with open(filename, "r") as f:
@@ -63,7 +64,7 @@ def get_class_from_ECOC(testing_predictions, class_codes, ecoc_number):
     label = []
     for i in range(testing_predictions.shape[0]):
         hamming_distances = []
-        for j in range(ecoc_number):
+        for j in range(class_codes.shape[0]):
             hamming_distances.append(distance.hamming(testing_predictions[i], class_codes[j]))
         label.append(np.array(hamming_distances).argmin())
     return label
@@ -81,12 +82,11 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
         testing_predictions_ecoc = np.concatenate((testing_predictions_ecoc,
                                               testing_predictions.reshape(X_test.shape[0], 1)), axis = 1)
         training_predictions_ecoc = np.concatenate((training_predictions_ecoc, training_predictions.reshape(X_train.shape[0], 1)), axis = 1)
-    testing_predictions_ecoc = testing_predictions_ecoc[:,1:]
-    training_predictions_ecoc = training_predictions_ecoc[:,1:]
-    y_pred_test = get_class_from_ECOC(testing_predictions_ecoc, class_codes[:,list], ecoc_number)
-    y_pred_train = get_class_from_ECOC(training_predictions_ecoc, class_codes[:, list], ecoc_number)
-    print("ECOC training accuracy = ", sklearn.metrics.accuracy_score(Y_train, y_pred_train))
-    print("ECOC testing accuracy = ", sklearn.metrics.accuracy_score(Y_test, y_pred_test))
+        if(i %5 == 0):
+            y_pred_test = get_class_from_ECOC(testing_predictions_ecoc[:,1:], class_codes[:,list], ecoc_number)
+            y_pred_train = get_class_from_ECOC(training_predictions_ecoc[:,1:], class_codes[:, list], ecoc_number)
+            print("ECOC training accuracy = ", sklearn.metrics.accuracy_score(Y_train, y_pred_train))
+            print("ECOC testing accuracy = ", sklearn.metrics.accuracy_score(Y_test, y_pred_test))
 
 
 
