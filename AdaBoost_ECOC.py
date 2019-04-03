@@ -3,9 +3,9 @@ import sklearn.metrics
 import matplotlib.pyplot as plt
 np.random.seed(0)
 from weak_classifier_decision_Stump import weak_classifier_decision_stump_2
-from sklearn.tree import DecisionTreeClassifier
 
-class AdaBoost_Active_Learning:
+
+class AdaBoost_ECOC:
     def __init__(self):
         pass
 
@@ -29,18 +29,12 @@ class AdaBoost_Active_Learning:
             testing_prediction += (alpha * y_pred_test)
             training_accuracy, training_error= self.calculate_error(training_prediction, training_data[:,-1])
             training_error_list.append(training_error)
-            testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
-            testing_error_list.append(testing_error)
-            if(i % 200 == 0):
-                #print("training accuracy = ", training_accuracy)
-                #print("testing_accuracy = ", testing_accuracy)
-                if(i > 0):
-                    self.plot_error(round_error)
-                    self.plot_ROC_curve(testing_prediction, testing_data[:, -1])
-                    self.plot_training_testing_error(training_error_list, i,0)
-                    self.plot_training_testing_error(testing_error_list, i, 1)
-        return training_accuracy, testing_accuracy, testing_prediction
-
+            #testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
+            #testing_error_list.append(testing_error)
+            if(i % 50 == 0):
+                print("training accuracy = ", training_accuracy)
+                self.plot_error(round_error)
+        return testing_prediction, training_prediction
 
     def plot_error(self, round_error):
         list_indices = []
