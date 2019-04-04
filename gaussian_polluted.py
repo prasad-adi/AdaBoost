@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sklearn.metrics
 import matplotlib.pyplot as plt
-import sklearn.decomposition.pca
+from sklearn.decomposition import PCA
 
 np.random.seed(42)
 
@@ -15,7 +15,7 @@ def read_data(file_name):
     training_data = np.c_[X_train, Y_train]
     testing_data = np.c_[X_test, Y_test]
     np.random.shuffle(training_data)
-    return training_data, testing_data
+    return training_data[:,:-1], training_data[:,-1], testing_data[:,:-1], testing_data[:,-1]
 
 def normalise_data(data):
     r,c = data.shape
@@ -89,24 +89,28 @@ def plot_ROC_curve(probability_Y0, probability_Y1, Y):
 
 
 
-def k_split(training_data, testing_data):
-    X_train = training_data[:,:-1]
-    Y_train = training_data[:,-1]
-    X_test = testing_data[:,:-1]
-    Y_test = testing_data[:,-1]
+def k_split(X_train, Y_train, X_test, Y_test):
     mu0, mu1, sigma0, sigma1 = fit_gaussian_curves(X_train, Y_train)
     training_accuracy = get_predictions(X_train, Y_train, Y_train, mu0, mu1, sigma0, sigma1)
     test_accuracy = get_predictions(X_test, Y_test, Y_train, mu0, mu1,sigma0,sigma1)
     print("training_accuracy  = ", training_accuracy)
     print("test_accuracy = ", test_accuracy)
 
-def run():
-    training_data, testing_data = read_data("/Users/adityaprasad/Desktop/spambaseData/spambase.data.txt")
-    normalised_data = normalise_data(data)
+def get_PCA(training_data, testing_data):
+    pca_reduction = PCA(n_components=100)
+    train_size = training_data.shape[0]
+    data = np.concatenate((training_data,testing_data), axis = 0)
+    pca_data = pca_reduction.fit_transform(data)
+    return pca_data[:train_size,:], pca_data[train_size:,:]
 
-    k_split(training_data, testing_data)
+
+def run(pca):
+    X_train, Y_train, X_test, Y_test = read_data("/Users/adityaprasad/Desktop/spambaseData/spambase.data.txt")
+    if(pca):
+        X_train, X_test = get_PCA(X_train, X_test)
+    k_split(X_train, Y_train, X_test, Y_test)
 
 
-run()
+run(pca = True)
 
 
