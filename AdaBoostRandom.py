@@ -33,14 +33,14 @@ class AdaBoostRandom:
             testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
             testing_error_list.append(testing_error)
 
-            if(i % 100 == 0):
+            if(i % 200 == 0):
                 print("training accuracy = ", training_accuracy)
                 print("testing_accuracy = ", testing_accuracy)
                 self.plot_error(round_error)
                 self.plot_ROC_curve(testing_prediction, testing_data[:, -1])
-                if(i > 0):
-                    self.plot_training_testing_error(training_error, i, 0)
-                    self.plot_training_testing_error(testing_error, i, 1)
+                #if(i > 0):
+                    #self.plot_training_testing_error(training_error, i, 0)
+                    #self.plot_training_testing_error(testing_error, i, 1)
         return training_accuracy, testing_accuracy
 
     def plot_training_testing_error(self, error, i, flag):

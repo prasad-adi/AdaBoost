@@ -94,7 +94,7 @@ class Preprocess:
         c = []
 
 boost = Preprocess()
-boost.run(normalise = False,epochs = 201, random_classifier= False, k_split= 10, database = 1, bagging = True)
+boost.run(normalise = False,epochs = 1000, random_classifier= True, k_split= 1, database = 1, bagging = True)
 
 
 

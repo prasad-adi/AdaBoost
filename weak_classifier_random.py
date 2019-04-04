@@ -1,5 +1,5 @@
 import numpy as np
-np.random.seed(42)
+
 
 class weak_classifier_random:
     def __init__(self, data, distributions):

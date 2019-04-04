@@ -1,12 +1,10 @@
 import numpy as np
 import sklearn.metrics
 import matplotlib.pyplot as plt
-np.random.seed(0)
-from weak_classifier_decision_Stump import weak_classifier_decision_stump_2
 from weak_classifier_random import weak_classifier_random
+np.random.seed(42)
 
-
-class AdaBoost_ECOC:
+class AdaBoostRandom:
     def __init__(self):
         pass
 
@@ -16,41 +14,50 @@ class AdaBoost_ECOC:
         testing_prediction = np.repeat(0.0, testing_data.shape[0])
         round_error = []
         training_error_list = []
+        testing_error_list = []
         for i in range(epochs):
-            weak_classifier_used = weak_classifier_decision_stump_2()
-            epsilon, column,  value = weak_classifier_used.fit(X = training_data[:,:-1], Y = training_data[:,-1], distributions = distribution)
-            y_pred = weak_classifier_used.predict(value=value, column=column, X = training_data[:,:-1])
+            weak_classifier = weak_classifier_random(training_data, distribution)
+            column,value = weak_classifier.build_stump()
+            y_pred = weak_classifier.predict(training_data)
+            wrong_indices = np.where(y_pred != training_data[:,-1])[0]
+            epsilon = np.sum(distribution[wrong_indices])
             round_error.append(epsilon)
             alpha = (0.5) * (np.log(1- epsilon) - np.log(epsilon))
             temp_distribution = (distribution * np.exp(-alpha * training_data[:,-1] * y_pred ))
             distribution = temp_distribution / np.sum(temp_distribution)
             training_prediction += (alpha * y_pred)
-            y_pred_test = weak_classifier_used.predict(value = value, column = column, X = testing_data[:,:-1])
+            y_pred_test = weak_classifier.predict(testing_data)
             testing_prediction += (alpha * y_pred_test)
             training_accuracy, training_error= self.calculate_error(training_prediction, training_data[:,-1])
             training_error_list.append(training_error)
-            if(i % 10 == 0):
+            testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
+            testing_error_list.append(testing_error)
+
+            if(i % 100 == 0):
                 print("training accuracy = ", training_accuracy)
-                self.plot_error(round_error)
+                print("testing_accuracy = ", testing_accuracy)
+                #if(i > 0):
+                    #self.plot_training_testing_error(training_error, i, 0)
+                    #self.plot_training_testing_error(testing_error, i, 1)
         return testing_prediction, training_prediction
+
+    def plot_training_testing_error(self, error, i, flag):
+        list_indices = []
+        for i in range(i):
+            list_indices.append(i)
+        plt.plot(list_indices, error)
+        if (flag):
+            plt.ylabel('Testing error')
+        else:
+            plt.ylabel('Training error')
+        plt.xlabel('rounds')
+        plt.show()
 
     def plot_error(self, round_error):
         list_indices = []
         for i in range(len(round_error)):
             list_indices.append(i)
         plt.plot(list_indices, round_error)
-        plt.show()
-
-    def plot_training_testing_error(self, error, i, flag):
-        list_indices = []
-        for i in range(i+1):
-            list_indices.append(i)
-        plt.plot(list_indices, error)
-        if(flag):
-            plt.ylabel('Testing error')
-        else:
-            plt.ylabel('Training error')
-        plt.xlabel('rounds')
         plt.show()
 
 

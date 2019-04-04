@@ -47,8 +47,6 @@ class Preprocess:
         for i in range(len(answers)):
             if(answers[i] not in predicted):
                 count += 1
-        print(predicted.sort)
-        print(answers.sort)
         print(count)
 
 

@@ -53,9 +53,9 @@ def get_class_from_ECOC(testing_predictions, class_codes):
 
 @ray.remote
 def call_boost(list, class_codes, i,X_train, Y_train, X_test, Y_test ):
-    boosting = AdaBoostRandom()
+    boosting = AdaBoost_ECOC()
     Y = get_label(list[i], class_codes, Y_train)
-    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 1)
+    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 100)
     testing_predictions = np.where(testing_predictions <= 0, -1, 1)
     training_predictions = np.where(training_predictions <= 0, -1, 1)
     return testing_predictions, training_predictions
@@ -117,21 +117,7 @@ def read(filename):
     return data
 
 X_train, Y_train = read_data("./8newsgroup/train.trec/feature_matrix.txt", 1)
-print("Read X_train")
 X_test, Y_test = read_data("./8newsgroup/test.trec/feature_matrix.txt", 0)
-#X_train_Id = read.remote("./X_train.txt")
-#Y_train_Id = read.remote("./Y_train.txt")
-print("Read  Y_train")
-#X_test_Id = read.remote("./X_test.txt")
-print("Read X_test")
-#Y_test_Id = read.remote("./Y_test.txt")
-#X_train = ray.get(X_train_Id)
-#Y_train = ray.get(Y_train_Id)
-#X_test = ray.get(X_test_Id)
-#Y_test = ray.get(Y_test_Id)
-print("Read Y_test")
-#X_train = X_train[1:,:]
-#X_test = X_test[1:,:]
 class_codes = generate_class_codes(8)
 class_codes = np.where(class_codes == 0, -1, class_codes)
-run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 50)
+run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 20)
