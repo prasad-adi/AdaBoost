@@ -61,7 +61,7 @@ def get_class_from_ECOC(testing_predictions, class_codes):
 def call_boost(list, class_codes, i,X_train, Y_train, X_test, Y_test ):
     boosting = AdaBoost_ECOC()
     Y = get_label(list[i], class_codes, Y_train)
-    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 1)
+    testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 200)
     testing_predictions = np.where(testing_predictions <= 0, -1, 1)
     training_predictions = np.where(training_predictions <= 0, -1, 1)
     return testing_predictions, training_predictions
