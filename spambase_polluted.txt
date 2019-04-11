@@ -1,0 +1,2 @@
+Average_training_accuracy = 0.9845410628019323
+Average testing_accuracy = 0.9370932754880694

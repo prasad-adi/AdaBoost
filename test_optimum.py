@@ -1,12 +1,8 @@
 import pandas as pd
 import numpy as np
 import ray
-import resource
-import sys
-import os
 from scipy.spatial import distance
 from AdaBoost_ECOC import AdaBoost_ECOC
-from Ada_Boost_Ecoc_Random import AdaBoostRandom
 import sklearn
 
 ray.init()
@@ -115,6 +111,8 @@ def generate_class_codes(k):
 def read(filename):
     data = np.loadtxt(filename)
     return data
+
+
 
 X_train, Y_train = read_data("./8newsgroup/train.trec/feature_matrix.txt", 1)
 X_test, Y_test = read_data("./8newsgroup/test.trec/feature_matrix.txt", 0)

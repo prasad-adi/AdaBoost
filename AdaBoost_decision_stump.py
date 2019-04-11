@@ -9,7 +9,7 @@ class AdaBoost_decison_stump:
     def __init__(self):
         pass
 
-    def boost(self, training_data, testing_data, epochs):
+    def boost(self, training_data, testing_data, epochs, f):
         distribution = np.full((training_data.shape[0]), 1 / training_data.shape[0])
         training_prediction = np.repeat(0.0, training_data.shape[0])
         testing_prediction = np.repeat(0.0, testing_data.shape[0])
@@ -17,7 +17,6 @@ class AdaBoost_decison_stump:
         training_error_list = []
         testing_error_list = []
         for i in range(epochs):
-            print(i)
             weak_classifier_used = weak_classifier_decision_stump_2()
             epsilon, column,  value = weak_classifier_used.fit(X = training_data[:,:-1], Y = training_data[:,-1], distributions = distribution)
             y_pred = weak_classifier_used.predict(value=value, column=column, X = training_data[:,:-1])
@@ -38,8 +37,18 @@ class AdaBoost_decison_stump:
             training_error_list.append(training_error)
             testing_accuracy, testing_error = self.calculate_error(testing_prediction, testing_data[:,-1])
             testing_error_list.append(testing_error)
-            print("training accuracy = ", training_accuracy)
-            print("testing_accuracy = ", testing_accuracy)
+            if(i % 50 == 0):
+                f.write("\n" + str(i))
+                f.write("\ntraining accuracy = " + str(training_accuracy))
+                f.write("\ntesting accuracy = " + str(testing_accuracy))
+                print(i)
+                print("training accuracy = ", training_accuracy)
+                print("testing_accuracy = ", testing_accuracy)
+                if (i > 0):
+                    self.plot_error(round_error)
+                    self.plot_ROC_curve(testing_prediction, testing_data[:, -1])
+                    self.plot_training_testing_error(training_error_list, i, 0)
+                    self.plot_training_testing_error(testing_error_list, i, 1)
         return training_accuracy, testing_accuracy
 
 

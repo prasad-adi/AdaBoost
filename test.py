@@ -66,9 +66,6 @@ def concatenate(ecoc, predictions0, predictions1, predictions2, X):
     ecoc = np.concatenate((ecoc, predictions2.reshape(X.shape[0], 1)), axis=1)
     return ecoc
 
-
-
-
 def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
     list = get_random_codes(class_codes, ecoc_number)
     testing_predictions_ecoc = np.zeros(X_test.shape[0]).reshape(X_test.shape[0], 1)
@@ -91,7 +88,7 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
             y_pred_test = get_class_from_ECOC(testing_predictions_ecoc[:, 1:], class_codes[:, list[:i]])
             y_pred_train = get_class_from_ECOC(training_predictions_ecoc[:, 1:], class_codes[:, list[:i]])
             f.write("ECOC training accuracy = " + str(sklearn.metrics.accuracy_score(Y_train, y_pred_train)))
-            f.write("ECOC testing accuracy = " +str(sklearn.metrics.accuracy_score(Y_test, y_pred_test)))
+            f.write("ECOC testing accuracy = " + str(sklearn.metrics.accuracy_score(Y_test, y_pred_test)))
             print("ECOC training accuracy = ", sklearn.metrics.accuracy_score(Y_train, y_pred_train))
             print("ECOC testing accuracy = ", sklearn.metrics.accuracy_score(Y_test, y_pred_test))
 
