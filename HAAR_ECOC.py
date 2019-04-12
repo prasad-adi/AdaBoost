@@ -48,7 +48,7 @@ def get_class_from_ECOC(testing_predictions, class_codes):
     return np.array(label)
 
 @ray.remote
-def call_boost(list, class_codes, i,X_train, Y_train, X_test, Y_test ):
+def call_boost(list, class_codes, i,X_train, Y_train, X_test, Y_test):
     boosting = AdaBoost_ECOC()
     Y = get_label(list[i], class_codes, Y_train)
     testing_predictions, training_predictions = boosting.boost(np.c_[X_train, Y], np.c_[X_test, Y_test], 200)
@@ -68,7 +68,7 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
     testing_predictions_ecoc = np.zeros(X_test.shape[0]).reshape(X_test.shape[0], 1)
     training_predictions_ecoc = np.zeros(X_train.shape[0]).reshape(X_train.shape[0], 1)
     i = 0
-    with open("./Ecoc.txt", "w") as f:
+    with open("./HAAR.txt", "w") as f:
         while(i < ecoc_number):
             print(i)
             Id1 = call_boost.remote(list, class_codes, i, X_train, Y_train, X_test, Y_test)
@@ -82,6 +82,7 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
             training_predictions_ecoc = concatenate(training_predictions_ecoc, training_predictions0, training_predictions1, training_predictions2,
                                                     X_train)
             i += 3
+            print("ecoc number = ", i)
             y_pred_test = get_class_from_ECOC(testing_predictions_ecoc[:, 1:], class_codes[:, list[:i]])
             y_pred_train = get_class_from_ECOC(training_predictions_ecoc[:, 1:], class_codes[:, list[:i]])
             f.write("ECOC training accuracy = " + str(sklearn.metrics.accuracy_score(Y_train, y_pred_train)))

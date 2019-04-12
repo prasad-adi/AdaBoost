@@ -3,7 +3,6 @@ import sklearn.metrics
 import matplotlib.pyplot as plt
 np.random.seed(0)
 from weak_classifier_decision_Stump import weak_classifier_decision_stump_2
-from weak_classifier_random import weak_classifier_random
 
 
 class AdaBoost_ECOC:
@@ -30,8 +29,8 @@ class AdaBoost_ECOC:
             training_accuracy, training_error= self.calculate_error(training_prediction, training_data[:,-1])
             training_error_list.append(training_error)
             if(i % 10 == 0):
+                print(i)
                 print("training accuracy = ", training_accuracy)
-                self.plot_error(round_error)
         return testing_prediction, training_prediction
 
     def plot_error(self, round_error):
