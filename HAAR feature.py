@@ -12,7 +12,7 @@ class HAAR:
         main_indices = []
         for i in range(10):
             indices = np.where(Y == i)[0]
-            size = int(len(indices) * 0.2)
+            size = int(len(indices) * 0.5)
             indices_20 = np.random.randint(0, len(indices), size=size)
             main_indices.extend(indices[indices_20])
         return X[main_indices], Y[main_indices]
