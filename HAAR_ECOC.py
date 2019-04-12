@@ -4,10 +4,9 @@ import ray
 from scipy.spatial import distance
 from AdaBoost_ECOC import AdaBoost_ECOC
 import sklearn
-from Extract_HAAR import HaarFeatures
 ray.init()
-from scipy.io import loadmat
 from mnist2image.mnist import load_mnist
+from Extract_HAAR import HaarFeatures
 
 def read_data(filename, train):
     with open(filename, "r") as f:
@@ -126,23 +125,22 @@ def read_mnist():
 
 
 
-X = np.loadtxt("./features.txt")
-Y = np.loadtxt("./labels.txt")
-data = np.c_[X, Y]
+
+
+X, Y = read_mnist()
+haar = HaarFeatures(100)
+features = haar.getFeatures(X)
+data = np.c_[features, Y]
 np.random.shuffle(data)
 train_size = int(data.shape[0] * 0.9)
 X_train = data[:train_size, :-1]
 X_test = data[train_size:,:-1]
 Y_train = data[:train_size,-1]
 Y_test = data[train_size: ,-1]
-
-# X, Y = read_mnist()
-# haar = HaarFeatures(100)
-# features = haar.getFeatures(X)
 # np.savetxt("./features.txt", features)
 # np.savetxt("./labels.txt", Y)
 print("done reading")
 class_codes = generate_class_codes(10)
 print("got class codes")
 class_codes = np.where(class_codes == 0, -1, class_codes)
-run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 50)
+run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 51)
