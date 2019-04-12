@@ -70,7 +70,7 @@ def  run(class_codes, X_train, Y_train, X_test, Y_test, ecoc_number):
     i = 0
     with open("./HAAR.txt", "w") as f:
         while(i < ecoc_number):
-            print(i)
+            print("ecoc number = ", i)
             Id1 = call_boost.remote(list, class_codes, i, X_train, Y_train, X_test, Y_test)
             Id2 = call_boost.remote(list, class_codes, i + 1, X_train, Y_train, X_test, Y_test)
             Id3 = call_boost.remote(list,  class_codes, i + 2, X_train, Y_train, X_test, Y_test)
