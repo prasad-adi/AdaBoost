@@ -126,21 +126,21 @@ def read_mnist():
 
 
 
-
-X, Y = read_mnist()
-haar = HaarFeatures(100)
-features = haar.getFeatures(X)
-data = np.c_[features, Y]
+import zipfile
+with zipfile.ZipFile("./features.txt.zip","r") as zip_ref:
+    zip_ref.extractall("./")
+X = np.loadtxt("./features.txt")
+Y = np.loadtxt("./labels.txt")
+data = np.c_[X, Y]
 np.random.shuffle(data)
 train_size = int(data.shape[0] * 0.9)
 X_train = data[:train_size, :-1]
 X_test = data[train_size:,:-1]
 Y_train = data[:train_size,-1]
 Y_test = data[train_size: ,-1]
-# np.savetxt("./features.txt", features)
-# np.savetxt("./labels.txt", Y)
+
 print("done reading")
 class_codes = generate_class_codes(10)
 print("got class codes")
 class_codes = np.where(class_codes == 0, -1, class_codes)
-run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 51)
+# run(class_codes, X_train, Y_train.reshape(Y_train.shape[0],1), X_test, Y_test.reshape(Y_test.shape[0], 1), 51)
