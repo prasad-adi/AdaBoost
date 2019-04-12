@@ -5,7 +5,6 @@ from scipy.spatial import distance
 from AdaBoost_ECOC import AdaBoost_ECOC
 import sklearn
 ray.init()
-from mnist2image.mnist import load_mnist
 from Extract_HAAR import HaarFeatures
 
 def read_data(filename, train):
