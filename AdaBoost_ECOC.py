@@ -9,7 +9,7 @@ class AdaBoost_ECOC:
     def __init__(self):
         pass
 
-    def boost(self, training_data, testing_data, epochs):
+    def boost(self, training_data, testing_data, epochs, f):
         distribution = np.full((training_data.shape[0]), 1 / training_data.shape[0])
         training_prediction = np.repeat(0.0, training_data.shape[0])
         testing_prediction = np.repeat(0.0, testing_data.shape[0])
@@ -28,7 +28,9 @@ class AdaBoost_ECOC:
             testing_prediction += (alpha * y_pred_test)
             training_accuracy, training_error= self.calculate_error(training_prediction, training_data[:,-1])
             training_error_list.append(training_error)
-            if(i % 10 == 0):
+            if(i % 100 == 0):
+                f.write("\n" + str(i))
+                f.write("\ntraining_accuracy = " + str(training_accuracy))
                 print(i)
                 print("training accuracy = ", training_accuracy)
         return testing_prediction, training_prediction
